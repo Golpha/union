@@ -13,11 +13,20 @@ class CallableEntity
 {
     private $callback;
 
+    /**
+     * CallableEntity constructor.
+     * @param callable $callback
+     */
     public function __construct(callable $callback)
     {
         $this->callback = $callback;
     }
 
+    /**
+     * Callback getter.
+     *
+     * @return callable
+     */
     public function getCallback()
     {
         return $this->callback;

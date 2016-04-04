@@ -19,11 +19,24 @@ trait StorageLayer
      */
     private $data = [];
 
+    /**
+     * StorageLayer constructor.
+     * @param array $data
+     */
     public function __construct(array $data = [])
     {
         $this->data = $data;
     }
 
+    /**
+     * gets the value for a given key. if the key does not exists, $default would be returned. If the given key
+     * is known and a GroupEntity-instance, the GroupEntity-instance will be resolved as an array. If the given key
+     * is known and a CallableEntity, the callback will be executed.
+     *
+     * @param string $key
+     * @param null $default
+     * @return mixed
+     */
     public function get(string $key, $default = null)
     {
         if ( $this->isGroup($key) ) {
@@ -38,16 +51,35 @@ trait StorageLayer
         return $this->data[$key] ?? $default;
     }
 
+    /**
+     * Checks whether the given key does exists or not.
+     *
+     * @param string $key
+     * @return bool
+     */
     public function has(string $key): bool
     {
         return array_key_exists($key, $this->data);
     }
 
+    /**
+     * checks whether the value of a key in the storage is a GroupEntity-instance or not.
+     *
+     * @param string $key
+     * @return bool
+     */
     public function isGroup(string $key): bool
     {
         return $this->has($key) && $this->data[$key] instanceof GroupEntity;
     }
 
+    /**
+     * does a case-insensitive lookup for keys that starts with the keyPattern. No grep-like or regex-like matching
+     * just plain strings.
+     *
+     * @param string $keyPattern
+     * @return array
+     */
     public function find(string $keyPattern): array
     {
         return array_filter($this->data, function($key) use ($keyPattern) {
@@ -55,6 +87,11 @@ trait StorageLayer
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    /**
+     * internally used.
+     *
+     * @return array|\Union\Entities\CallableEntity[]|\Union\Entities\GroupEntity[]
+     */
     protected function data()
     {
         return $this->data;

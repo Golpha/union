@@ -17,6 +17,13 @@ class Configuration implements ConfigurationInterface
 {
     use StorageLayer;
 
+    /**
+     * sets a key with the given value
+     *
+     * @param string $key
+     * @param $value
+     * @return Configuration
+     */
     public function set(string $key, $value): Configuration
     {
         $this->data[$key] = $value;
@@ -24,6 +31,13 @@ class Configuration implements ConfigurationInterface
         return $this;
     }
 
+    /**
+     * mounts another Configuration-instance as a GroupEntity to this Configuration
+     *
+     * @param string $key
+     * @param Configuration $configuration
+     * @return Configuration
+     */
     public function mount(string $key, Configuration $configuration): Configuration
     {
         $this->data[$key] = new GroupEntity($configuration->data());
@@ -31,6 +45,13 @@ class Configuration implements ConfigurationInterface
         return $this;
     }
 
+    /**
+     * encloses a callback as a CallbackEntity-Instance stored at the given key.
+     *
+     * @param string $key
+     * @param callable $callback
+     * @return Configuration
+     */
     public function enclose(string $key, callable $callback): Configuration
     {
         $this->data[$key] = new CallableEntity($callback);

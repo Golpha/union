@@ -1,5 +1,8 @@
 # UNION
-Explary ( not yet documented or deeply tested ) Configuration Implementation
+Educational Source ( not yet documented or deeply tested ) Configuration Implementation
+
+Dependencies
+- PHP 7.0+
 
 ```json
 {

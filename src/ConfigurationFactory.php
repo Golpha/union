@@ -15,14 +15,30 @@ use Union\Exceptions\IncompatibilityException;
 
 class ConfigurationFactory
 {
+    /**
+     * @var LoaderInterface[]
+     */
     private $loader = [];
 
+    /**
+     * registers a set of class names as loaders to the factory
+     *
+     * @param \string[] ...$loaders
+     * @throws AlreadyExistsException when the loader is already known
+     * @throws \Exception when the loader is not compatible
+     * @return ConfigurationFactory
+     */
     public function register(string ... $loaders): ConfigurationFactory
     {
         foreach ( $loaders as $loader )
         {
             $loader = new $loader;
             $name = get_class($loader);
+
+            if ( ! $loader instanceof LoaderInterface )
+            {
+                throw new \Exception('Unknown class: '.$name);
+            }
 
             if ( array_key_exists($name, $this->loader) )
             {
@@ -37,6 +53,13 @@ class ConfigurationFactory
         return $this;
     }
 
+    /**
+     * registers a set of loader-instances to the factory
+     *
+     * @param LoaderInterface[] ...$loaders
+     * @throws AlreadyExistsException when the loader is already known
+     * @return $this
+     */
     public function registerLoader(LoaderInterface ... $loaders)
     {
         foreach ( $loaders as $loader )
@@ -56,6 +79,15 @@ class ConfigurationFactory
         return $this;
     }
 
+    /**
+     * loads a specific location ( file or directory ) into a new loader instance. directories are processed
+     * recursively.
+     *
+     * @param \SplFileInfo $file
+     * @param bool $immutable
+     * @param bool $asGroup
+     * @return ConfigurationInterface
+     */
     public function load(\SplFileInfo $file, bool $immutable = false, $asGroup = false): ConfigurationInterface
     {
         if ( $file->isDir() ) {
@@ -105,6 +137,11 @@ class ConfigurationFactory
         ;
     }
 
+    /**
+     * returns an array of supported extensions by the registered loaders for this factory
+     *
+     * @return array
+     */
     public function getSupportedExtensions()
     {
         $grouped = array_map(function(LoaderInterface $loader) {

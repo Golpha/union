@@ -16,6 +16,11 @@ class GroupEntity implements ConfigurationInterface
 {
     use StorageLayer;
 
+    /**
+     * evaluates the stored data as a in-level array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return array_combine(
